@@ -1,17 +1,16 @@
-from typing import Iterable, Any
 import yaml
 from pathlib import Path
 
-def build_message(specification: Any):
+def build_message(specification):
     return [{"role": "system", "content": loadSysPrompt()}, {"role": "user", "content": buildUserPrompt(specification)}]
 
 def loadSysPrompt():
     path = Path(__file__).parent.parent.parent / "config" / "sys_prompt.yaml"
     with open(path, "r", encoding="utf-8") as f:
         #print(yaml.safe_load(f))
-        return yaml.safe_load(f)
+        return yaml.safe_load(f).get("systemPrompt", "")
 
-def buildUserPrompt(spec: Any):
+def buildUserPrompt(spec):
     sampleID = _get(spec, "sampleID", "")
     topicFamily = _get(spec, "topicFamily", "")
     subTopic = _get(spec, "subTopic", "")
@@ -96,12 +95,12 @@ sampleID, topicFamily, subTopic, partyPreset, speakerRole, textType, register, g
 
 
 #dict und objektartige specifications können eingelsesn werden
-def _get(spec: Any, key: str, default=None):
+def _get(spec, key, default=None):
     if isinstance(spec, dict):
         return spec.get(key, default)
     return getattr(spec, key, default)
 
-def _formatRequiredAspects(requiredAspects: Iterable[str] | None):
+def _formatRequiredAspects(requiredAspects):
     aspects = list(requiredAspects or [])
     if not aspects:
         return ''
@@ -111,14 +110,14 @@ def _formatRequiredAspects(requiredAspects: Iterable[str] | None):
     return '\n'.join(lines)
 
 #gibt partyLine und ContextLine aus
-def makeOptional(spec:Any):
-    promtCondition = _get(spec, "promptCondition", "minC1")
+def makeOptional(spec):
+    promptCondition = _get(spec, "promptCondition", "minC1")
     partyPreset = _get(spec, "partyPreset", "")
     speakerRole =_get(spec, "speakerRole", "")
 
-    if promtCondition == "minC1":
+    if promptCondition == "minC1":
         return ("", "")
-    elif promtCondition == "partyPresC2":
+    elif promptCondition == "partyPresC2":
         return (
             f"- partyPreset: {partyPreset}",
             (
@@ -128,7 +127,7 @@ def makeOptional(spec:Any):
                 "Nenne die Partei nicht ausdrücklich, es sei denn, dies fügt sich ganz natürlich in die Rede ein."
             )
         )
-    elif promtCondition == "parlamContextC3":
+    elif promptCondition == "parlamContextC3":
         return (
             f"- partyPreset: {partyPreset}",
             (
