@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from typing import Iterable
 import pandas as pd
+import yaml
 
 
 def readJsonl(path: str | Path):
@@ -37,3 +38,7 @@ def parentIsThere(path:str | Path):
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     return p
+
+def loadYaml(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)

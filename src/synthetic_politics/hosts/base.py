@@ -21,7 +21,7 @@ def getAnswer(self, *, systemPrompt: str, userPrompt: str, temperature: float, t
 
 def retry(self, fn):
     lastError =None
-    for i in rnage(1, self.config.maxRetries + 1):
+    for i in range(1, self.config.maxRetries + 1):
         try:
             return fn()
         except Exception as exc:
