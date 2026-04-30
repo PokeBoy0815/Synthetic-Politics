@@ -1,7 +1,7 @@
 import httpx
 from synthetic_politics.hosts.base import HostBase
 
-class GitHubModelsProvider(HostBase):
+class GitHubModelsHost(HostBase):
     def __init__(self, modelKey, config):
         super().__init__(modelKey, config)
         self.baseURL = (config.baseURL or "https://models.github.ai").rstrip("/")

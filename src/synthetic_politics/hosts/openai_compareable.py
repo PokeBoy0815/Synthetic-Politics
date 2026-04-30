@@ -1,7 +1,7 @@
 from openai import OpenAI
 from synthetic_politics.hosts.base import HostBase
 
-class OpenAICompatibleProvider(HostBase):
+class OpenAICompatibleHost(HostBase):
     def __init__(self, modelKey, config):
         super().__init__(modelKey, config)
         self.client = OpenAI(
