@@ -140,3 +140,4 @@ def makeOptional(spec):
             )
         )
 
+    return ("", "")

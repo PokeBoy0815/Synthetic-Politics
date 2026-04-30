@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from synthetic_politics.generation_schemas import ModelConfigurations
 
-class BaseProvider(ABC):
+class HostBase(ABC):
     def __init__(self, modelKey: str, config: ModelConfigurations):
         self.modelKey =modelKey
         self.config = config
