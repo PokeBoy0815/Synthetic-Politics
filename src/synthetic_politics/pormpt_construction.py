@@ -72,7 +72,6 @@ Anforderungen:
 - Füge keine einleitenden Sätze wie „Hier ist die JSON-Ausgabe“ hinzu.
 - Füge keinen Text vor dem öffnenden „{{“ oder nach dem schließenden „}}“ ein.
 - Der Text sollte wie ein plausibler Beitrag in einer Plenardebatte des Bundestages klingen.
-- Er muss originell sein und darf keiner bekannten Rede zu sehr ähneln.
 - Vermeide theatralische, archaische oder unplausible parlamentarische Formulierungen.
 - Verwende einen nüchternen, politikorientierten parlamentarischen Ton.
 - Verwende plausible Anredeformen im Stil des Bundestages wie „Herr Präsident“, „Frau Präsidentin“ oder „Meine Damen und Herren“.

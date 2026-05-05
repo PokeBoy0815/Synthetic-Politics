@@ -36,7 +36,7 @@ def buildHost(modelKey, modelConfig):
     
 def genOne(spec, host):
     userPrompt = buildUserPrompt(spec)
-    result = host.generate(
+    result = host.getAnswer(
         systemPrompt=loadSysPrompt,
         userPrompt=userPrompt,
         temperature=spec.temperature,
