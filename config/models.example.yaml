@@ -1,0 +1,33 @@
+models:
+  llama_small:
+    host: openai_compatible
+    modelID: meta-llama/Meta-Llama-3-8B-Instruct-Lite
+    APIKeyFromEnv: TOGETHER_API_KEY
+    baseURL: https://api.together.xyz/v1
+    timeOutSecs: 120
+    maxRetries: 3
+
+  phi_small:
+    host: github_models
+    modelID: microsoft/Phi-4-mini-instruct
+    APIKeyFromEnv: GITHUB_TOKEN
+    baseURL: https://models.github.ai
+    apiVersion: "2026-03-10"
+    timeOutSecs: 120
+    maxRetries: 3
+
+  llama_large:
+    host: openai_compatible
+    modelID: meta-llama/Llama-3.3-70B-Instruct-Turbo
+    APIKeyFromEnv: TOGETHER_API_KEY
+    baseURL: https://api.together.xyz/v1
+    timeOutSecs: 180
+    maxRetries: 3
+
+  gpt4o:
+    host: openai_responses
+    modelID: gpt-4o
+    APIKeyFromEnv: OPENAI_API_KEY
+    baseURL: null
+    timeOutSecs: 120
+    maxRetries: 3

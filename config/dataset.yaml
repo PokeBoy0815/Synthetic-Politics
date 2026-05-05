@@ -1,0 +1,52 @@
+promptVersion: v1
+created_by: markus_masterarbeit
+
+defaultGeneration:
+  targetLength: 550 - 650
+  register: formal parliamentary German
+  temperature: 0.8
+  top_p: 0.9
+  maxOutputTokens: 2000
+  seeds: [11, 22, 33]
+
+selection:
+  speakerRoles:
+    - mp_plenary_statement
+  textTypes:
+    - long_plenary_speech
+
+promptConditions:
+  minC1:
+    uses_party_anchor: false
+    uses_context: false
+  partyPresC2:
+    uses_party_anchor: true
+    uses_context: false
+  parlamContextC3:
+    uses_party_anchor: true
+    uses_context: true
+
+topics:
+  migration_asyl:
+    - asylverfahren
+    - abschiebung
+    - integration
+  klima_energie:
+    - heizungsgesetz
+    - strompreise
+    - erneuerbare_ausbau
+  soziales_wirtschaft:
+    - buergergeld
+    - mindestlohn
+    - rente
+  aussen_sicherheit:
+    - ukraine_hilfe
+    - bundeswehr
+    - innere_sicherheit
+
+partyPresets:
+  - CDU/CSU
+  - SPD
+  - Bündnis 90/Die Grünen
+  - FDP
+  - AfD

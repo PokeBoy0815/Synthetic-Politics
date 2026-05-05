@@ -1,0 +1,49 @@
+promptVersion: v1_smoke
+created_by: markus_masterarbeit
+
+defaultGeneration:
+  targetLength: 550 - 650 
+  register: formal parliamentary German
+  temperature: 0.8
+  top_p: 0.9
+  maxOutputTokens: 2000
+  seeds: [11]
+
+selection:
+  speakerRoles:
+    - mp_plenary_statement
+  textTypes:
+    - long_plenary_speech
+
+promptConditions:
+  minC1:
+    uses_party_anchor: false
+    uses_context: false
+  partyPresC2:
+    uses_party_anchor: true
+    uses_context: false
+
+topics:
+  migration_asyl:
+    - name: asylverfahren
+      issueFocus: "Dauer und Fairness von Asylverfahren"
+      speechGoal: "parlamentarische Einordnung des Problems und Formulierung politischen Handlungsbedarfs"
+      requiredAspects:
+        - "Verfahrensdauer"
+        - "Behördenkapazität"
+        - "rechtliche Verfahrensstandards"
+        - "praktische Folgen für Betroffene und Verwaltung"
+
+  klima_energie:
+    - name: strompreise
+      issueFocus: "politische Einordnung hoher Strompreise"
+      speechGoal: "Benennung eines Problems und Formulierung einer politischen Reaktion im parlamentarischen Stil"
+      requiredAspects:
+        - "Belastung von Haushalten"
+        - "Belastung von Unternehmen"
+        - "energiepolitische Rahmenbedingungen"
+        - "staatliche oder regulatorische Maßnahmen"
+
+partyPresets:
+  - SPD
+  - CDU/CSU
