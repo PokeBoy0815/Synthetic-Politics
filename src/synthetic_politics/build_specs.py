@@ -1,5 +1,4 @@
 import uuid
-from pathlib import Path
 from synthetic_politics.generation_schemas import GenerationSpecifications
 
 
@@ -13,11 +12,9 @@ def _normalizeSubtopicEntry(entry):
             "speechGoal": None,
             "requiredAspects": []
         }
-    elif isinstance(entry, dict):
-        name = entry.get("name")
-        
+    elif isinstance(entry, dict):        
         return {
-            "name": entry,
+            "name": entry.get("name"),
             "issueFocus": entry.get("issueFocus"),
             "speechGoal": entry.get("speechGoal"),
             "requiredAspects": list(entry.get("requiredSpects", [])) or []
@@ -29,7 +26,7 @@ def buildSpecs(datasetConfig, modelKeys):
     promptConditions =datasetConfig["promptConditions"]
     topics = datasetConfig["topics"]
     partyPresets = datasetConfig["partyPresets"]
-    speakerRoles = datasetConfig["speakerRoles"]
+    speakerRoles = datasetConfig["selection"]["speakerRoles"]
     textTypes = datasetConfig["selection"]["textTypes"]
     seeds = defaults["seeds"]
 
@@ -50,7 +47,7 @@ def buildSpecs(datasetConfig, modelKeys):
                                             sampleID=str(uuid.uuid4()),
                                             topicFamily=topicFamily,
                                             subTopic=subtopicConfig["name"],
-                                            partyAffiliation=partyPreset,
+                                            partyPreset=partyPreset,
                                             speakerRole=speakerRole,
                                             textType=textType,
                                             targetLength=str(defaults["targetLength"]),

@@ -1,24 +1,35 @@
 import anthropic
-from synthetic_politics.hosts.base import HostBase
+from synthetic_politics.hosts.base import BaseProvider
 
-class AnthropicMessagesHost(HostBase):
+class AnthropicMessagesProvider(BaseProvider):
     def __init__(self, modelKey, config):
         super().__init__(modelKey, config)
         self.client = anthropic.Anthropic(api_key=self.apiKey, timeout=config.timeOutSecs)
 
     #remove seed if not used
-    def getAnswer(self, *, systemPrompt, userPrompt, temperature, top_p, maxOutputTokens, seed):
+    def getAnswer(
+        self,
+        *,
+        systemPrompt,
+        userPrompt,
+        temperature,
+        top_p,
+        maxOutputTokens,
+        seed
+    ):
         def _call():
+            print("hier wird anthropic requested")
+            print(self.config.modelID)
             response = self.client.messages.create(
                 model = self.config.modelID,
                 system = systemPrompt,
-                messages = [
-                    {"role": "user", "content": userPrompt}
-                ],
+                #messages=[{"role": "user", "content": "was ist die hauptstadt von detuschland"}],
+                messages = [{"role": "user", "content": userPrompt}],
                 temperature = temperature,
                 top_p = top_p,
                 max_tokens = maxOutputTokens
             )
+            #print(response)
             parts = []
             for block in response.content:
                 text = getattr(block, "text", None)

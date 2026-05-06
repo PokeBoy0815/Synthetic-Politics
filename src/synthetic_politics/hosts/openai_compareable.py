@@ -1,7 +1,7 @@
 from openai import OpenAI
-from synthetic_politics.hosts.base import HostBase
+from synthetic_politics.hosts.base import BaseProvider
 
-class OpenAICompatibleHost(HostBase):
+class OpenAICompatibleProvider(BaseProvider):
     def __init__(self, modelKey, config):
         super().__init__(modelKey, config)
         self.client = OpenAI(
@@ -12,6 +12,7 @@ class OpenAICompatibleHost(HostBase):
 
     def getAnswer(self, *, systemPrompt, userPrompt, temperature, top_p, maxOutputTokens, seed):
         def _call():
+            #print("iamopneai")
             response = self.client.chat.completions.create(
                 model=self.config.modelID,
                 messages=[

@@ -17,8 +17,8 @@ def readJsonl(path: str | Path):
                             
 
 def writeJsonl(path: str | Path, rows: Iterable[dict], mode: str ="w"):
-    p = parentIsThere(path)
-    with open(p, mode, encoding="utf-8") as f:
+    path = parentIsThere(path)
+    with open(path, mode, encoding="utf-8") as f:
         for row in rows:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
 

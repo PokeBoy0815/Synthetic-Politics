@@ -1,32 +1,32 @@
 from pathlib import Path
 import yaml
 
-from synthetic_politics.pormpt_construction import loadSysPrompt, buildUserPrompt
+from synthetic_politics.pormpt_construction import SYSTEM_PROMPT, buildUserPrompt
 from synthetic_politics.qc import finalizeRecord
 from synthetic_politics.generation_schemas import GenerationDocumentation, GenerationSpecifications, ModelConfigurations
 from synthetic_politics.data_helper import appendJsonl
-from synthetic_politics.hosts.anthropic_model import AnthropicMessagesHost
-from synthetic_politics.hosts.openai_response import OpenAIResponsesHost
-from synthetic_politics.hosts.github_model import GitHubModelsHost
-from synthetic_politics.hosts.openai_compareable import OpenAICompatibleHost
+from synthetic_politics.hosts.anthropic_model import AnthropicMessagesProvider
+from synthetic_politics.hosts.openai_response import OpenAIResponsesProvider
+from synthetic_politics.hosts.github_model import GitHubModelsProvider
+from synthetic_politics.hosts.openai_compareable import OpenAICompatibleProvider
 
 HOST_MAP={
-    "openaiResponses": OpenAIResponsesHost,
-    "opneaiComparable": OpenAICompatibleHost,
-    "anthropicMessages": AnthropicMessagesHost,
-    "githubModels": GitHubModelsHost
+    "openai_responses": OpenAIResponsesProvider,
+    "openai_compatible": OpenAICompatibleProvider,
+    "anthropic_messages": AnthropicMessagesProvider,
+    "github_models": GitHubModelsProvider
 }
 
 
 def loadModelConfigs(path):
     with open(path, "r", encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
-        out = {}
-        for key, value in cfg["models"].items():
-            #debug print
-            print(value)
-            out[key] = ModelConfigurations(**value)
-        return out
+    out = {}
+    for key, value in cfg["models"].items():
+        #debug print
+        #print(value)
+        out[key] = ModelConfigurations(**value)
+    return out
 
 def buildHost(modelKey, modelConfig):
     host_cls = HOST_MAP.get(modelConfig.host)
@@ -34,17 +34,18 @@ def buildHost(modelKey, modelConfig):
         raise ValueError(f"unsupported host type: {modelConfig.host}")
     return host_cls(modelKey, modelConfig)
     
-def genOne(spec, host):
+def genOne(spec: GenerationSpecifications, host):
     userPrompt = buildUserPrompt(spec)
+    #print("in genOne")
     result = host.getAnswer(
-        systemPrompt=loadSysPrompt,
+        systemPrompt=SYSTEM_PROMPT,
         userPrompt=userPrompt,
         temperature=spec.temperature,
         top_p=spec.top_p,
         maxOutputTokens=spec.maxOutputTokens,
         seed=spec.seed
     )
-
+    #print(result)
     preliminary = GenerationDocumentation(
         sampleID=spec.sampleID,
         modelKey=spec.modelKey,
@@ -54,7 +55,7 @@ def genOne(spec, host):
         promptCondition=spec.promptCondition,
         topicFamily=spec.topicFamily,
         subTopic=spec.subTopic,
-        partyAffilitation=spec.partyAffiliation,
+        partyPreset=spec.partyPreset,
         speakerRole=spec.speakerRole,
         textType=spec.textType,
         targetLength=spec.targetLength,
@@ -63,7 +64,7 @@ def genOne(spec, host):
         top_p=spec.top_p,
         maxOutputTokens=spec.maxOutputTokens,
         seed=spec.seed,
-        sysPrompt=loadSysPrompt,
+        sysPrompt=SYSTEM_PROMPT,
         userPrompt=userPrompt,
         rawText=result.get("text", ""),
         parsedJSON=None,
@@ -83,7 +84,7 @@ def genMultiple(specs, modelConfigs, outPath):
         provider = hosts[spec.modelKey]
         try:
             record = genOne(spec, provider)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             record = GenerationDocumentation(
                 sampleID=spec.sampleID,
                 modelKey=spec.modelKey,
@@ -93,7 +94,7 @@ def genMultiple(specs, modelConfigs, outPath):
                 promptCondition=spec.promptCondition,
                 topicFamily=spec.topicFamily,
                 subTopic=spec.subTopic,
-                partyAffilitation=spec.partyAffiliation,
+                partyPreset=spec.partyPreset,
                 speakerRole=spec.speakerRole,
                 textType=spec.textType,
                 targetLength=spec.targetLength,
@@ -102,7 +103,7 @@ def genMultiple(specs, modelConfigs, outPath):
                 top_p=spec.top_p,
                 maxOutputTokens=spec.maxOutputTokens,
                 seed=spec.seed,
-                sysPrompt=loadSysPrompt,
+                sysPrompt=SYSTEM_PROMPT,
                 userPrompt=buildUserPrompt(spec),
                 rawText="",
                 parsedJSON=None,

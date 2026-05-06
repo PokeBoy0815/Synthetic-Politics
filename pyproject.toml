@@ -2,14 +2,19 @@
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[projekt]
-name = "synthetic-politics"
-version ="0.0.1"
-description = " generation of synthetic parliament speeches"
+[project]
+name = "synthetic-politics-gen"
+version = "0.1.0"
+description = "API-based generation for synthetic German political texts"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "pandas>=2.2.0"
+  "pandas>=2.2.0",
+  "pyarrow>=15.0.0",
+  "PyYAML>=6.0.1",
+  "openai>=1.0.0",
+  "anthropic>=0.40.0",
+  "httpx>=0.27.0",
 ]
 
 [tool.setuptools]

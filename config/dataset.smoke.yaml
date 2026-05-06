@@ -1,8 +1,8 @@
-promptVersion: v1_smoke
+promptVersion: v2_smoke
 created_by: markus_masterarbeit
 
 defaultGeneration:
-  targetLength: 550 - 650 
+  targetLength: 450 - 550 
   register: formal parliamentary German
   temperature: 0.8
   top_p: 0.9

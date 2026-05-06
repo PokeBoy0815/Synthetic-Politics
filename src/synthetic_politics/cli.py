@@ -6,8 +6,7 @@ from synthetic_politics.data_helper import loadYaml, readJsonl, writeJsonl
 from synthetic_politics.transform import transformAll
 
 
-if __name__ == "__main__":
-    main()
+
 
 def main():
     parser = buildParser()
@@ -55,3 +54,6 @@ def buildParser():
     p3.set_defaults(func=cmdTransform)
 
     return parser
+
+if __name__ == "__main__":
+    main()
