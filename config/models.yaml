@@ -31,3 +31,11 @@ models:
     baseURL: null
     timeOutSecs: 120
     maxRetries: 3
+
+  gpt4_1:
+    host: openai_responses
+    modelID: gpt-4.1
+    APIKeyFromEnv: OPENAI_API_KEY
+    baseURL: null
+    timeOutSecs: 120
+    maxRetries: 3

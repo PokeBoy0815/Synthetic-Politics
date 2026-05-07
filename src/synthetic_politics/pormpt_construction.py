@@ -56,7 +56,9 @@ def buildUserPrompt(spec):
             "If a party preset is provided, use it only as a broad political orientation for argumentative emphasis and style."
         )
     return f"""
-Context:
+Create one original synthetic German parliamentary political text.
+
+Kontext:
 - sampleID: {sampleID}
 - topicFamily: {topicFamily}
 - subTopic: {subTopic}
@@ -105,10 +107,10 @@ Requirements:
 - Do not include markdown fences.
 - Copy metadata fields exactly from the provided context and do not invent or modify them.
 - {anchorRule}
-- The speech must contain 1000 words.
 - Do not write short paragraphs.
 - Do not end the speech early.
 - Each required aspect should be addressed in at least one full sentence.
+- Do not wrap the JSON in triple backticks.
 
 
 Return valid JSON with the keys:
