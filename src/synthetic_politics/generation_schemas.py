@@ -2,14 +2,14 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 
 def getTimeAsIso():
-    return datetime.now(timezone.utc).isoformat.replace("+00:00", "Z")
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 @dataclass
 class GenerationSpecifications:
     sampleID: str
     topicFamily: str
     subTopic: str
-    partyAfiliation: str
+    partyPreset: str
     speakerRole: str
     textType: str
     targetLength: str
@@ -21,6 +21,13 @@ class GenerationSpecifications:
     maxOutputTokens: int
     seed: int
     promptVersion: str
+
+    # neu, aber optional -> abwärtskompatibel
+    #erst mal ausgelassen -> müssen später nachgereicht werden
+    
+    issueFocus: str | None = None
+    speechGoal: str | None = None
+    requiredAspects: list[str] = field(default_factory=list)
 
     def toDict(self):
           return asdict(self)
@@ -45,21 +52,21 @@ class GenerationDocumentation:
     host: str
     promptVersion: str
     promptCondition: str
-    topicFamiy: str
+    topicFamily: str
     subTopic: str
-    partyAffiliation: str
+    partyPreset: str
     speakerRole: str
     textType: str
     targetLength: str
     register: str
     temperature: float
     top_p: float
-    maxOutputTokes: int
+    maxOutputTokens: int
     seed: int
     sysPrompt: str
-    userPropmt: str
+    userPrompt: str
     rawText: str
-    parsedJSON: dict[str, Any] | None
+    parsedJSON: dict | None
     parseOK: bool
     qcFlags: list[str]=field(default_factory=list)
     requestID: str | None=None
@@ -91,7 +98,7 @@ class SpeechDocumentation:
     promptCondition: str
     topicFamily: str
     subTopic: str
-    partyAffiliation: str
+    partyPreset: str
     speakerRole: str
     textType: str
     targetLength: str

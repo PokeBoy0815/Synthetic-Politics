@@ -1,7 +1,7 @@
 import httpx
-from synthetic_politics.hosts.base import HostBase
+from synthetic_politics.hosts.base import BaseProvider
 
-class GitHubModelsHost(HostBase):
+class GitHubModelsProvider(BaseProvider):
     def __init__(self, modelKey, config):
         super().__init__(modelKey, config)
         self.baseURL = (config.baseURL or "https://models.github.ai").rstrip("/")
@@ -10,6 +10,7 @@ class GitHubModelsHost(HostBase):
         self.timeout = config.timeOutSecs
 
     def getAnswer(self, *, systemPrompt, userPrompt, temperature, top_p, maxOutputTokens, seed):
+        #print(self.apiKey)
         url = f"{self.baseURL}/inference/chat/completions"
         if self.org:
             url = f"{self.baseURL}/orgs/{self.org}/inference/chat/completions"

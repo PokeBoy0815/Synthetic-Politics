@@ -1,7 +1,7 @@
 from openai import OpenAI
-from synthetic_politics.hosts.base import HostBase
+from synthetic_politics.hosts.base import BaseProvider
 
-class OpenAIResponsesHost(HostBase):
+class OpenAIResponsesProvider(BaseProvider):
     def __init__(self, modelKey, config):
         super().__init__(modelKey, config)
         kwargs = {"api_key": self.apiKey, "timeout": config.timeOutSecs}

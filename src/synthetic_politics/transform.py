@@ -45,7 +45,7 @@ def rawtoSpeeches(rawPath):
                 promptCondition=row["promptCondition"],
                 topicFamily=row["topicFamily"],
                 subTopic=row["subTopic"],
-                partyAffiliation=row["partyPreset"],
+                partyPreset=row["partyPreset"],
                 speakerRole=row["speakerRole"],
                 textType=row["textType"],
                 targetLength=row["targetLength"],

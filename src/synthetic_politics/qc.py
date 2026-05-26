@@ -6,7 +6,7 @@ from synthetic_politics.generation_schemas import GenerationDocumentation, Gener
 REQUIRED_JSON_KEYS = {
     "sampleID",
     "topicFamily",
-    "subtopic",
+    "subTopic",
     "partyPreset",
     "speakerRole",
     "textType",
@@ -140,12 +140,12 @@ def qcFlagsFor(spec, parsedJson, rawText, finishReason):
 def finalizeRecord(record, spec):
     parsed = extractJsonObject(record.rawText)
     if parsed is not None:
-        parsed["sample_id"] = spec.sampleID
-        parsed["topic_family"] = spec.topicFamily
-        parsed["subtopic"] = spec.subTopic
-        parsed["party_anchor"] = spec.partyAffiliation
-        parsed["speaker_role"] = spec.speakerRole
-        parsed["text_type"] = spec.textType
+        parsed["sampleID"] = spec.sampleID
+        parsed["topicFamily"] = spec.topicFamily
+        parsed["subTopic"] = spec.subTopic
+        parsed["partyPreset"] = spec.partyPreset
+        parsed["speakerRole"] = spec.speakerRole
+        parsed["textType"] = spec.textType
         parsed["register"] = spec.register
     flags = qcFlagsFor(spec, parsed, record.rawText, record.finishingReason)
     critical_flags = {
@@ -163,7 +163,7 @@ def finalizeRecord(record, spec):
         promptCondition=record.promptCondition,
         topicFamily=record.topicFamily,
         subTopic=record.subTopic,
-        partyAffilitation=record.partyAffilitation,
+        partyPreset=record.partyPreset,
         speakerRole=record.speakerRole,
         textType=record.textType,
         targetLength=record.targetLength,

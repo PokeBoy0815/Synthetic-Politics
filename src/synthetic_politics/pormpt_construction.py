@@ -1,14 +1,32 @@
 import yaml
 from pathlib import Path
 
-def build_message(specification):
-    return [{"role": "system", "content": loadSysPrompt()}, {"role": "user", "content": buildUserPrompt(specification)}]
+#v2 !!
+SYSTEM_PROMPT = """
+You generate original synthetic German parliamentary political texts for academic research.
+Write in German only.
+The output must sound like a plausible contemporary Wahlperiode 20 Bundestag plenary speech.
+Avoid theatrical, archaic, overly literary, or implausible parliamentary formulas.
+Do not invent a party identity, faction, politician, or office unless this is explicitly provided in the context.
+Do not reproduce known speeches or quote real politicians.
+Do not explain your reasoning.
+Output only one JSON object.
+Your response must start with "{" and end with "}".
+Do not write any text before or after the JSON object.
+Return valid JSON only.
+""".strip()
 
+def build_message(specification):
+    return [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": buildUserPrompt(specification)}]
+
+"""
 def loadSysPrompt():
     path = Path(__file__).parent.parent.parent / "config" / "sys_prompt.yaml"
     with open(path, "r", encoding="utf-8") as f:
         #print(yaml.safe_load(f))
         return yaml.safe_load(f).get("systemPrompt", "")
+"""
+
 
 def buildUserPrompt(spec):
     sampleID = _get(spec, "sampleID", "")
@@ -16,79 +34,86 @@ def buildUserPrompt(spec):
     subTopic = _get(spec, "subTopic", "")
     speakerRole = _get(spec, "speakerRole", "")
     textType = _get(spec, "textType", "")
-    targetLength = _get(spec, "targetLength", "")
+    #targetLength = _get(spec, "targetLength", "")
     register = _get(spec, "register", "")
     issueFocus = _get(spec, "issueFocus", "")
     speechGoal = _get(spec, "speechGoal", "")
-    requiredAspects = _get(spec, "requiredAspects", []) or []
+    #requiredAspects = _get(spec, "requiredAspects", []) or []
 
     partyLine, contextLine = makeOptional(spec)
 
     issueFocusPart = f"- issueFocus: {issueFocus}" if issueFocus else ""
     speechGoalPart = f"- speechGoal: {speechGoal}" if speechGoal else ""
-    requiredAspectsPart= _formatRequiredAspects(requiredAspects)
+    #requiredAspectsPart= _formatRequiredAspects(requiredAspects)
 
     promptCondition = _get(spec, "promptCondition", "minC1")
 
-    if promptCondition != "minC1":
-        partyPreset = "Wenn eine Partei angegeben ist, kopiere sie exakt in das JSON Feld 'partyPreset'"
+    if promptCondition == "minC1":
+        anchorRule = (
+            'If no party preset is provided in the context, set "partyPreset" to an empty string in the JSON.\n'
+            "If no party preset is provided in the context, do not mention or imply a specific party, faction, politician, or named political group in the speech."
+        )
     else:
-        partyPreset = "Wenn keine Partei angegeben ist, setze 'partyPreset' als leeren Strin in der JSON"
-
+        anchorRule = (
+            'If a party preset is provided, copy it exactly into the JSON field "partyPreset".\n'
+            "If a party preset is provided, use it only as a broad political orientation for argumentative emphasis and style."
+        )
     return f"""
+Create one original synthetic German parliamentary political text.
+
 Kontext:
 - sampleID: {sampleID}
 - topicFamily: {topicFamily}
 - subTopic: {subTopic}
 - speakerRole: {speakerRole}
 - textType: {textType}
-- setting: Plenardebatte des deutschen Budestags
+- setting: German Bundestag plenary debate
 - register: {register}
-- {partyLine}
-- {issueFocusPart}
-- {speechGoalPart}
-- {requiredAspectsPart}
+{partyLine}
+{issueFocusPart}
+{speechGoalPart}
 {contextLine}
 
+
 Task:
-Schreibe eine eigene deutsche Parlamentsrede.
+Write one original synthetic German parliamentary speech of 650 to 750 words.
 
-Die Rede sollte:
-- den issue focus direkt adressieren,
-- das speech goal als kommunikative funktion des Texts nutzen,
-- alle erforderlichen Aspekte auf schlüssige Weise abdecken, sofern diese Aspekte angegeben sind,
-- wie ein plausibler Beitrag in einer aktuellen Plenarsitzung des Bundestages klingen,
-- mit einer politischen Bewertung, einer Forderung oder einem Vorschlag abschließen.
 
-Gliedere die Rede wie folgt:
-- eine kurze Einleitung zum Thema,
-- einen ausführlichen Hauptteil, der mehrere konkrete Aspekte behandelt,
-- eine abschließende politische Bewertung, eine Forderung oder einen Vorschlag.
+The speech should:
+- address the subtopic directly and stay within the topic family,
+- sound like a plausible contemporary Bundestag plenary contribution,
+- end with a political evaluation, proposal, or demand.
 
-Anforderungen:
-- Der Text muss auf Deutsch verfasst sein.
-- Gib nur ein JSON-Objekt aus.
-- Deine Antwort muss mit „{{“ beginnen und mit „}}“ enden.
-- Füge keine einleitenden Sätze wie „Hier ist die JSON-Ausgabe“ hinzu.
-- Füge keinen Text vor dem öffnenden „{{“ oder nach dem schließenden „}}“ ein.
-- Der Text sollte wie ein plausibler Beitrag in einer Plenardebatte des Bundestages klingen.
-- Vermeide theatralische, archaische oder unplausible parlamentarische Formulierungen.
-- Verwende einen nüchternen, politikorientierten parlamentarischen Ton.
-- Verwende plausible Anredeformen im Stil des Bundestages wie „Herr Präsident“, „Frau Präsidentin“ oder „Meine Damen und Herren“.
-- Verwende keine Formen wie „Herr/Frau Präsidentin“, „Ehrwürdige Abgeordneten“, „Guten Tag“ oder „Herr Abgeordneter“.
-- Füge keine Metadaten in den Redetext ein.
-- Füge keine Erklärungen oder Anmerkungen ein.
-- Füge keine Markdown-Fences ein.
-- Übernimm Metadatenfelder exakt aus dem bereitgestellten Kontext, sofern vorhanden.
-- Erfinde oder ändere keine Metadatenwerte.
-- {partyPreset}
-- Verfasse etwa {targetLength} Wörter.
-- Verfasse mindestens 8 vollständige Sätze.
-- Verfasse mindestens 3 Absätze von nennenswerter Länge.
-- Behandle alle erforderlichen Aspekte als wesentliche Bestandteile der Rede, nicht als kurze Liste.
-- Jeder erforderliche Aspekt sollte in mindestens einem vollständigen Satz behandelt werden.
 
-Gib gültiges JSON mit den folgenden Keys zurück:
+Structure:
+- Write exactly 4 substantial paragraphs.
+- Paragraph 1: introduce the issue and explain why it matters.
+- Paragraph 2: describe the core problem and its consequences.
+- Paragraph 3: develop the political argument and briefly contrast it with an opposing view.
+- Paragraph 4: conclude with a summary and a clear call to action.
+
+
+Requirements:
+- The text must be written in German.
+- Output only one JSON object.
+- Your response must start with "{{" and end with "}}".
+- Do not add any text before the opening "{{" or after the closing "}}".
+- It must be original and not resemble a known speech too closely.
+- Avoid theatrical, archaic, or implausible parliamentary formulas.
+- Use a sober, policy-oriented parliamentary tone.
+- Use plausible Bundestag-style address forms such as "Herr Präsident", "Frau Präsidentin", or "Meine Damen und Herren".
+- Do not use forms such as "Herr/Frau Präsidentin", "Ehrwürdige Abgeordneten", "Guten Tag", or "Herr Abgeordneter".
+- Do not include metadata inside the speech text.
+- Do not include explanations or notes.
+- Do not include markdown fences.
+- Copy metadata fields exactly from the provided context and do not invent or modify them.
+- {anchorRule}
+- Do not write short paragraphs.
+- Do not end the speech early.
+- Do not wrap the JSON in triple backticks.
+
+
+Return valid JSON with the keys:
 sampleID, topicFamily, subTopic, partyPreset, speakerRole, textType, register, generatedText
 """.strip()
 
@@ -114,28 +139,30 @@ def makeOptional(spec):
     partyPreset = _get(spec, "partyPreset", "")
     speakerRole =_get(spec, "speakerRole", "")
 
-    if promptCondition == "minC1":
+    if promptCondition == "C1_minimal":
         return ("", "")
     elif promptCondition == "partyPresC2":
         return (
             f"- partyPreset: {partyPreset}",
             (
-                "Zusätzliche Anweisungen:\n"
-                "Wenn ein party preset angegeben ist, verwende diesen nur als grobe Orientierung für argumentative Schwerpunkte und den Stil der Rede.\n"
-                "Imitiere keine echten Politiker oder bekannte Reden.\n"
-                "Nenne die Partei nicht ausdrücklich, es sei denn, dies fügt sich ganz natürlich in die Rede ein."
+                "Additional instruction:\n"
+                "If a party preset is provided, use it only as a broad orientation "
+                "for argumentative emphasis and policy style.\n"
+                "Do not imitate real politicians or known speeches.\n"
+                "Do not explicitly name the party unless it fits naturally into the speech."
             )
         )
-    elif promptCondition == "parlamContextC3":
+    elif promptCondition == "C3_parliamentary_context":
         return (
             f"- partyPreset: {partyPreset}",
             (
-                "- debateContext: laufende Plenardebatte im Bundestag\n"
+                "- debateContext: ongoing Bundestag plenary debate\n"
                 f"- roleContext: {speakerRole}\n\n"
-                "Zusätzliche Anweisungen:\n"
-                "Verwende den party preset nur als grobe Orientierung für argumentative Schwerpunkte und den politischen Stil.\n"
-                "Imitiere keine echten Politiker oder bekannte Reden.\n"
-                "Nennen die Partei nicht ausdrücklich, es sei denn, dies fügt sich natürlich in die Rede ein."
+                "Additional instruction:\n"
+                "Use the party preset only as a broad orientation for argumentative emphasis "
+                "and policy style.\n"
+                "Do not imitate real politicians or known speeches.\n"
+                "Do not explicitly name the party unless it fits naturally into the speech."
             )
         )
 
