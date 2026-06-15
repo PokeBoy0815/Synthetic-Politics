@@ -1,8 +1,8 @@
-promptVersion: v1
+promptVersion: v3-prod2
 created_by: markus_masterarbeit
 
 defaultGeneration:
-  targetLength: 550 - 650
+  targetLength: 450 - 550
   register: formal parliamentary German
   temperature: 0.8
   top_p: 0.9
@@ -16,33 +16,180 @@ selection:
     - long_plenary_speech
 
 promptConditions:
-  minC1:
-    uses_party_anchor: false
-    uses_context: false
-  partyPresC2:
-    uses_party_anchor: true
-    uses_context: false
-  parlamContextC3:
-    uses_party_anchor: true
-    uses_context: true
+  C1_minimal: {}     #wieder einkommentieren wenn c1 lauf gemacht wird.
+  C3_parliamentary_context: {}
+
+synthesis_strategy:
+  topic_total_per_model_condition: 500  #wieder auf 1500 wenn hauptlauf
+
+  use_party_anchors_for_conditions:
+    - C1_minimal
+    - C3_parliamentary_context
 
 topics:
   migration_asyl:
-    - asylverfahren
-    - abschiebung
-    - integration
+    - name: grenzsteuerung
+      weight: 0.26
+      issueFocus: "Steuerung irregulärer Migration, Grenzkontrollen und Aufnahmebegrenzung"
+      speechGoal: "parlamentarische Einordnung migrationspolitischer Steuerungsfragen und Formulierung eines politischen Handlungsbedarfs"
+      requiredAspects:
+        - "Grenzkontrollen und Grenzschutz"
+        - "irreguläre Migration und Schleusung"
+        - "staatliche Steuerungsinstrumente"
+        - "Folgen für Aufnahme und Verwaltung"
+
+    - name: integration
+      weight: 0.25
+      issueFocus: "Integration von Zugewanderten in Gesellschaft, Bildung und Arbeitsmarkt"
+      speechGoal: "Benennung integrationspolitischer Herausforderungen und Formulierung politischer Maßnahmen"
+      requiredAspects:
+        - "Spracherwerb oder Integrationskurse"
+        - "Arbeitsmarkt oder Teilhabe"
+        - "Bildung, Wohnen oder kommunale Integration"
+        - "staatliche oder gesellschaftliche Rahmenbedingungen"
+
+    - name: asylverfahren
+      weight: 0.24
+      issueFocus: "Dauer und Fairness von Asylverfahren"
+      speechGoal: "parlamentarische Einordnung des Problems und Formulierung politischen Handlungsbedarfs"
+      requiredAspects:
+        - "Verfahrensdauer"
+        - "Behördenkapazität"
+        - "rechtliche Verfahrensstandards"
+        - "praktische Folgen für Betroffene und Verwaltung"
+
+    - name: abschiebung
+      weight: 0.25
+      issueFocus: "Durchsetzung von Rückführungen und Vollzug der Ausreisepflicht"
+      speechGoal: "Bewertung praktischer und rechtlicher Probleme von Rückführungen und Formulierung politischer Maßnahmen"
+      requiredAspects:
+        - "Ausreisepflicht oder Duldung"
+        - "Rückführung oder Abschiebung"
+        - "rechtliche und administrative Umsetzung"
+        - "staatliche Handlungsfähigkeit"
+
   klima_energie:
-    - heizungsgesetz
-    - strompreise
-    - erneuerbare_ausbau
+    - name: energieversorgung_industrie
+      weight: 0.34
+      issueFocus: "Energieversorgung, Versorgungssicherheit und industriepolitische Folgen der Transformation"
+      speechGoal: "Einordnung energiepolitischer Strukturfragen und Entwicklung eines politischen Handlungsbedarfs"
+      requiredAspects:
+        - "Versorgungssicherheit"
+        - "Industrie oder Standortpolitik"
+        - "Infrastruktur oder Kraftwerke"
+        - "staatliche Strategie oder Regulierung"
+
+    - name: erneuerbare_ausbau
+      weight: 0.32
+      issueFocus: "Ausbau erneuerbarer Energien und energiewirtschaftliche Infrastruktur"
+      speechGoal: "politische Bewertung des Ausbaus erneuerbarer Energien und Benennung von Reformbedarf"
+      requiredAspects:
+        - "Wind- oder Solarenergie"
+        - "Netzausbau oder Genehmigungen"
+        - "Ausbauhemmnisse"
+        - "politische Steuerung"
+
+    - name: strompreise
+      weight: 0.21
+      issueFocus: "politische Einordnung hoher Strompreise"
+      speechGoal: "Benennung eines Problems und Formulierung einer politischen Reaktion im parlamentarischen Stil"
+      requiredAspects:
+        - "Belastung von Haushalten"
+        - "Belastung von Unternehmen"
+        - "energiepolitische Rahmenbedingungen"
+        - "staatliche oder regulatorische Maßnahmen"
+
+    - name: heizungsgesetz
+      weight: 0.13
+      issueFocus: "Regulierung des Heizungstauschs und Umsetzung des Gebäudeenergiegesetzes"
+      speechGoal: "Einordnung der politischen Kontroverse und Formulierung einer legislativen oder administrativen Position"
+      requiredAspects:
+        - "Gebäudeenergiegesetz oder Heizungstausch"
+        - "Wärmepumpen oder Wärmeplanung"
+        - "Belastung für Eigentümer oder Kommunen"
+        - "staatliche Steuerung oder Förderung"
+
   soziales_wirtschaft:
-    - buergergeld
-    - mindestlohn
-    - rente
+    - name: inflation_lebenshaltungskosten
+      weight: 0.28
+      issueFocus: "Inflation, Kaufkraftverlust und Lebenshaltungskosten"
+      speechGoal: "Einordnung sozialer und wirtschaftlicher Belastungen und Formulierung einer politischen Reaktion"
+      requiredAspects:
+        - "Preissteigerungen oder Teuerung"
+        - "Belastung privater Haushalte"
+        - "Entlastung oder Kaufkraft"
+        - "staatliche Maßnahmen"
+
+    - name: buergergeld
+      weight: 0.23
+      issueFocus: "Bürgergeld, Grundsicherung und arbeitsmarktpolitische Aktivierung"
+      speechGoal: "Bewertung der Bürgergeldpolitik und Formulierung von Reform- oder Verteidigungsargumenten"
+      requiredAspects:
+        - "Grundsicherung oder Regelsatz"
+        - "Arbeitsanreize oder Vermittlung"
+        - "Jobcenter oder Verwaltung"
+        - "soziale Absicherung"
+
+    - name: wirtschaft_arbeitsmarkt
+      weight: 0.21
+      issueFocus: "Arbeitsmarkt, wirtschaftliche Entwicklung und Standortpolitik"
+      speechGoal: "Benennung wirtschafts- und arbeitsmarktpolitischer Probleme und Formulierung politischer Maßnahmen"
+      requiredAspects:
+        - "Arbeitsmarkt oder Beschäftigung"
+        - "Konjunktur oder Wachstum"
+        - "Unternehmen, Mittelstand oder Industrie"
+        - "staatliche Wirtschafts- oder Standortpolitik"
+
+    - name: rente
+      weight: 0.18
+      issueFocus: "Alterssicherung, Rentenniveau und langfristige Tragfähigkeit der Rente"
+      speechGoal: "parlamentarische Einordnung rentenpolitischer Herausforderungen und Formulierung von Reformbedarf"
+      requiredAspects:
+        - "Rentenniveau oder Altersvorsorge"
+        - "Finanzierung"
+        - "Generationengerechtigkeit"
+        - "staatliche Reformoptionen"
+
+    - name: mindestlohn
+      weight: 0.10
+      issueFocus: "Mindestlohn und Lohnuntergrenzen im Arbeitsmarkt"
+      speechGoal: "Bewertung des Mindestlohns und Formulierung arbeitsmarktpolitischer Argumente"
+      requiredAspects:
+        - "Lohnhöhe oder Kaufkraft"
+        - "Beschäftigung oder Unternehmen"
+        - "Tarifbindung oder Arbeitsmarkt"
+        - "staatliche Regulierung"
+
   aussen_sicherheit:
-    - ukraine_hilfe
-    - bundeswehr
-    - innere_sicherheit
+    - name: ukraine_hilfe
+      weight: 0.66
+      issueFocus: "Deutsche Unterstützung für die Ukraine im Kontext des russischen Angriffskriegs"
+      speechGoal: "parlamentarische Einordnung außen- und sicherheitspolitischer Unterstützung und Formulierung einer Position"
+      requiredAspects:
+        - "militärische oder zivile Hilfe"
+        - "europäische oder internationale Dimension"
+        - "russischer Angriffskrieg"
+        - "deutsche politische Verantwortung"
+
+    - name: bundeswehr
+      weight: 0.24
+      issueFocus: "Ausrüstung, Finanzierung und Reform der Bundeswehr"
+      speechGoal: "Einordnung verteidigungspolitischer Defizite und Benennung politischer Maßnahmen"
+      requiredAspects:
+        - "Ausrüstung oder Beschaffung"
+        - "Finanzierung oder Verteidigungshaushalt"
+        - "Struktur oder Einsatzfähigkeit"
+        - "politische Prioritätensetzung"
+
+    - name: innere_sicherheit
+      weight: 0.10
+      issueFocus: "Innere Sicherheit, Polizei und Schutz vor Kriminalität oder Extremismus"
+      speechGoal: "Benennung sicherheitspolitischer Probleme und Formulierung staatlicher Reaktionen"
+      requiredAspects:
+        - "Polizei oder Sicherheitsbehörden"
+        - "Kriminalität, Terrorismus oder Extremismus"
+        - "staatliche Handlungsfähigkeit"
+        - "rechtlicher oder institutioneller Rahmen"
 
 partyPresets:
   - CDU/CSU
@@ -50,3 +197,4 @@ partyPresets:
   - Bündnis 90/Die Grünen
   - FDP
   - AfD
+  - DIE LINKE

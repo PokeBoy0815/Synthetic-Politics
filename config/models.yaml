@@ -8,10 +8,10 @@ models:
     maxRetries: 3
 
   phi_small:
-    host: github_models
+    host: openrouter
     modelID: microsoft/Phi-4-mini-instruct
-    APIKeyFromEnv: GITHUB_TOKEN
-    baseURL: https://models.github.ai
+    APIKeyFromEnv: OPENROUTER_API_KEY
+    baseURL: https://openrouter.ai/api/v1
     apiVersion: "2026-03-10"
     timeOutSecs: 120
     maxRetries: 3
@@ -24,9 +24,17 @@ models:
     timeOutSecs: 180
     maxRetries: 3
 
-  gpt4o:
+#  gpt4o:
+#    host: openai_responses
+#    modelID: gpt-4o
+#    APIKeyFromEnv: OPENAI_API_KEY
+#    baseURL: null
+#    timeOutSecs: 120
+#    maxRetries: 3
+
+  gpt4_1:
     host: openai_responses
-    modelID: gpt-4o
+    modelID: gpt-4.1
     APIKeyFromEnv: OPENAI_API_KEY
     baseURL: null
     timeOutSecs: 120

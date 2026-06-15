@@ -5,7 +5,7 @@ from pathlib import Path
 SYSTEM_PROMPT = """
 You generate original synthetic German parliamentary political texts for academic research.
 Write in German only.
-The output must sound like a plausible contemporary Bundestag plenary speech.
+The output must sound like a plausible contemporary Wahlperiode 20 Bundestag plenary speech.
 Avoid theatrical, archaic, overly literary, or implausible parliamentary formulas.
 Do not invent a party identity, faction, politician, or office unless this is explicitly provided in the context.
 Do not reproduce known speeches or quote real politicians.
@@ -17,13 +17,8 @@ Return valid JSON only.
 """.strip()
 
 def build_message(specification):
-    return [{"role": "system", "content": loadSysPrompt()}, {"role": "user", "content": buildUserPrompt(specification)}]
+    return [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": buildUserPrompt(specification)}]
 
-def loadSysPrompt():
-    path = Path(__file__).parent.parent.parent / "config" / "sys_prompt.yaml"
-    with open(path, "r", encoding="utf-8") as f:
-        #print(yaml.safe_load(f))
-        return yaml.safe_load(f).get("systemPrompt", "")
 
 def buildUserPrompt(spec):
     sampleID = _get(spec, "sampleID", "")
@@ -31,17 +26,14 @@ def buildUserPrompt(spec):
     subTopic = _get(spec, "subTopic", "")
     speakerRole = _get(spec, "speakerRole", "")
     textType = _get(spec, "textType", "")
-    targetLength = _get(spec, "targetLength", "")
     register = _get(spec, "register", "")
     issueFocus = _get(spec, "issueFocus", "")
     speechGoal = _get(spec, "speechGoal", "")
-    requiredAspects = _get(spec, "requiredAspects", []) or []
 
     partyLine, contextLine = makeOptional(spec)
 
     issueFocusPart = f"- issueFocus: {issueFocus}" if issueFocus else ""
     speechGoalPart = f"- speechGoal: {speechGoal}" if speechGoal else ""
-    requiredAspectsPart= _formatRequiredAspects(requiredAspects)
 
     promptCondition = _get(spec, "promptCondition", "minC1")
 
@@ -69,19 +61,17 @@ Kontext:
 {partyLine}
 {issueFocusPart}
 {speechGoalPart}
-{requiredAspectsPart}
 {contextLine}
 
 
 Task:
-Write one original synthetic German parliamentary speech of 550 to 650 words.
+Write one original synthetic German parliamentary speech of 650 to 750 words.
 
 
 The speech should:
-- address the issue focus directly,
-- use the speech goal as the communicative function of the text,
-- cover all required aspects in a coherent way if such aspects are provided,
-- sound like a plausible contemporary Bundestag plenary contribution
+- address the subtopic directly and stay within the topic family,
+- sound like a plausible contemporary Bundestag plenary contribution,
+- end with a political evaluation, proposal, or demand.
 
 
 Structure:
@@ -109,7 +99,6 @@ Requirements:
 - {anchorRule}
 - Do not write short paragraphs.
 - Do not end the speech early.
-- Each required aspect should be addressed in at least one full sentence.
 - Do not wrap the JSON in triple backticks.
 
 
@@ -118,7 +107,7 @@ sampleID, topicFamily, subTopic, partyPreset, speakerRole, textType, register, g
 """.strip()
 
 
-#dict und objektartige specifications können eingelsesn werden
+#Dictionaries and object-like specifications can be imported
 def _get(spec, key, default=None):
     if isinstance(spec, dict):
         return spec.get(key, default)
@@ -133,13 +122,13 @@ def _formatRequiredAspects(requiredAspects):
         lines.append(f" - {aspect}")
     return '\n'.join(lines)
 
-#gibt partyLine und ContextLine aus
+#Outputs partyLine and ContextLine
 def makeOptional(spec):
     promptCondition = _get(spec, "promptCondition", "minC1")
     partyPreset = _get(spec, "partyPreset", "")
     speakerRole =_get(spec, "speakerRole", "")
 
-    if promptCondition == "minC1":
+    if promptCondition == "C1_minimal":
         return ("", "")
     elif promptCondition == "partyPresC2":
         return (
@@ -152,7 +141,7 @@ def makeOptional(spec):
                 "Do not explicitly name the party unless it fits naturally into the speech."
             )
         )
-    elif promptCondition == "parlamContextC3":
+    elif promptCondition == "C3_parliamentary_context":
         return (
             f"- partyPreset: {partyPreset}",
             (

@@ -7,14 +7,14 @@ from synthetic_politics.generation_schemas import GenerationDocumentation, Gener
 from synthetic_politics.data_helper import appendJsonl
 from synthetic_politics.hosts.anthropic_model import AnthropicMessagesProvider
 from synthetic_politics.hosts.openai_response import OpenAIResponsesProvider
-from synthetic_politics.hosts.github_model import GitHubModelsProvider
+from synthetic_politics.hosts.openrouter import OpenRouterProvider
 from synthetic_politics.hosts.openai_compareable import OpenAICompatibleProvider
 
 HOST_MAP={
     "openai_responses": OpenAIResponsesProvider,
     "openai_compatible": OpenAICompatibleProvider,
     "anthropic_messages": AnthropicMessagesProvider,
-    "github_models": GitHubModelsProvider
+    "openrouter": OpenRouterProvider
 }
 
 
@@ -36,7 +36,6 @@ def buildHost(modelKey, modelConfig):
     
 def genOne(spec: GenerationSpecifications, host):
     userPrompt = buildUserPrompt(spec)
-    #print("in genOne")
     result = host.getAnswer(
         systemPrompt=SYSTEM_PROMPT,
         userPrompt=userPrompt,
@@ -45,7 +44,6 @@ def genOne(spec: GenerationSpecifications, host):
         maxOutputTokens=spec.maxOutputTokens,
         seed=spec.seed
     )
-    #print(result)
     preliminary = GenerationDocumentation(
         sampleID=spec.sampleID,
         modelKey=spec.modelKey,
