@@ -17,13 +17,14 @@ selection:
 
 promptConditions:
   C1_minimal: {}     #wieder einkommentieren wenn c1 lauf gemacht wird.
-#  C3_parliamentary_context: {}
+  C3_parliamentary_context: {}
 
 synthesis_strategy:
   topic_total_per_model_condition: 500  #wieder auf 1500 wenn hauptlauf
 
   use_party_anchors_for_conditions:
     - C1_minimal
+    - C3_parliamentary_context
 
 topics:
   migration_asyl:
@@ -196,3 +197,4 @@ partyPresets:
   - Bündnis 90/Die Grünen
   - FDP
   - AfD
+  - DIE LINKE

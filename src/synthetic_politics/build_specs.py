@@ -99,7 +99,7 @@ def buildSpecs(datasetConfig: dict, modelKeys: list[str]) -> list['GenerationSpe
                                         sampleID=str(uuid.uuid4()),
                                         topicFamily=topic_family,
                                         subTopic=subtopic_name,
-                                        partyPreset="",
+                                        partyPreset=partyPreset,
                                         speakerRole=speakerRole,
                                         textType=textType,
                                         targetLength=str(defaults["targetLength"]),
